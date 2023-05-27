@@ -1,5 +1,13 @@
-export type CellState = {
+export type CellState = NormalState | WallState;
+
+type NormalState = {
     owner: null | 1 | 2,
     value: number,
-    type: null | "castle" | "wall"
+    type: null | "Castle" | "Crown",
+};
+
+type WallState = {
+    owner: null,
+    value: 0,
+    type: "Wall",
 };

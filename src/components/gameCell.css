@@ -1,0 +1,24 @@
+.EmptyCell, .WallCell, .CrownCell, .CastleCell {
+    text-align: center;
+    width: 5vw;
+    aspect-ratio: 1/1;
+    display: flex;
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+}
+
+.EmptyCell {
+    color: black;
+    background-color: white;
+}
+
+.WallCell {
+    color: black;
+    background-color: black;
+}
+
+.CrownCell, .CastleCell {
+    background-color: #7e7e7e;
+    color: white;
+}
