@@ -1,6 +1,7 @@
 import { GameState } from "../models/gameState";
 import { PlayerOutput } from "../models/playerOutput";
 
+// Deterministic Win on turn 101
 export const getPlayerOneMove = (gameState: GameState): PlayerOutput => {
     switch (gameState.turn) {
         case 98:

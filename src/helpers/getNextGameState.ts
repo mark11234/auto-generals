@@ -55,7 +55,7 @@ const doMove = (nextGamestate: GameState, move: PlayerOutput, player: 1 | 2): vo
         nextGamestate.rows[move.to.row][move.to.column].value += move.quantity;
     } else if (nextGamestate.rows[move.to.row][move.to.column].value >= move.quantity) {
         // Player loses to owner
-        nextGamestate.rows[move.to.row][move.to.column].value -= move.quantity;
+        nextGamestate.rows[move.to.row][move.to.column].value = nextGamestate.rows[move.to.row][move.to.column].value - move.quantity;
     } else {
         // Player beats owner
         nextGamestate.rows[move.to.row][move.to.column].value =

@@ -1,7 +1,6 @@
 import { GameState } from "../models/gameState";
 import { PlayerOutput } from "../models/playerOutput";
 
-
 export const verifyMove = (attemptedMove: PlayerOutput, gameState: GameState, player: number): PlayerOutput => {    
     if (!attemptedMove) {
         return null;
@@ -30,8 +29,8 @@ export const verifyMove = (attemptedMove: PlayerOutput, gameState: GameState, pl
 
     // Rescale so quantity is in range
     return {...attemptedMove,
-        quantity: attemptedMove.quantity < gameState.rows[attemptedMove.from.row][attemptedMove.from.column].value 
+        quantity: attemptedMove.quantity <= gameState.rows[attemptedMove.from.row][attemptedMove.from.column].value 
         ? attemptedMove.quantity
-        : gameState.rows[attemptedMove.from.row][attemptedMove.from.column].value
+        : gameState.rows[attemptedMove.from.row][attemptedMove.from.column].value - 1
     }
 }
