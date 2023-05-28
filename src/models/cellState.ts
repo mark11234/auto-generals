@@ -8,6 +8,6 @@ type NormalState = {
 
 type WallState = {
     owner: null,
-    value: 0,
+    value: number,
     type: "Wall",
 };
