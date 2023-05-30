@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/auto-generals/static/css/main.e3397a35.css",
-    "main.js": "/auto-generals/static/js/main.f09f5c24.js",
+    "main.js": "/auto-generals/static/js/main.05e0fbdb.js",
     "static/js/787.429b2368.chunk.js": "/auto-generals/static/js/787.429b2368.chunk.js",
     "index.html": "/auto-generals/index.html",
     "main.e3397a35.css.map": "/auto-generals/static/css/main.e3397a35.css.map",
-    "main.f09f5c24.js.map": "/auto-generals/static/js/main.f09f5c24.js.map",
+    "main.05e0fbdb.js.map": "/auto-generals/static/js/main.05e0fbdb.js.map",
     "787.429b2368.chunk.js.map": "/auto-generals/static/js/787.429b2368.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e3397a35.css",
-    "static/js/main.f09f5c24.js"
+    "static/js/main.05e0fbdb.js"
   ]
 }
