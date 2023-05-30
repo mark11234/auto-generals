@@ -1,7 +1,7 @@
 import { GameState } from "../models/gameState";
-import { PlayerOutput } from "../models/playerOutput";
+import { BotOutput } from "../models/botOutput";
 
-export const verifyMove = (attemptedMove: PlayerOutput, gameState: GameState, player: number): PlayerOutput => {    
+export const verifyMove = (attemptedMove: BotOutput, gameState: GameState, bot: number): BotOutput => {    
     if (!attemptedMove) {
         return null;
     }
@@ -19,7 +19,7 @@ export const verifyMove = (attemptedMove: PlayerOutput, gameState: GameState, pl
         return null;
     }
 
-    const doesNotOwnCell = gameState.rows[attemptedMove.from.row][attemptedMove?.from.column].owner !== player;
+    const doesNotOwnCell = gameState.rows[attemptedMove.from.row][attemptedMove?.from.column].owner !== bot;
     const cellsNotAdjacent = Math.abs(attemptedMove.from.row - attemptedMove.to.row) > 1 
         && Math.abs(attemptedMove.from.column - attemptedMove.to.column) > 1
     

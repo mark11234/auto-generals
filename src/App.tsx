@@ -12,7 +12,7 @@ function App() {
       <div className="Body">
         <p>Turn: {gameState.turn}</p>
         <GameField rowStates={gameState.rows}></GameField>
-        <p>{gameState.winner && `Player ${gameState.winner} wins!`}</p>
+        <p>{gameState.winner && `Bot ${gameState.winner} wins!`}</p>
         {
           !gameState.winner 
           && <button onClick={() => updateGameState(getNextGameState(gameState))

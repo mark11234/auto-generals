@@ -1,18 +1,19 @@
 import { CellState } from "../models/cellState";
 import { GameState } from "../models/gameState"
-import { PlayerOutput } from "../models/playerOutput";
-import { getPlayerOneMove } from "./getPlayerOneMove";
-import { getPlayerTwoMove } from "./getPlayerTwoMove";
+import { BotOutput } from "../models/botOutput";
 import { verifyMove } from "./verifyMove";
+
+// Change these to change the bots
+import bot1 from '../bots/nullBot';
+import bot2 from '../bots/nullBot';
 
 export const  getNextGameState =  (gameState: GameState): GameState => {
     const nextGameState:GameState={...gameState, turn: gameState.turn + 1};
 
-    // Todo: Change players into classes with function getMove()
-    const playerOneMove = verifyMove(getPlayerOneMove(gameState), gameState, 1);
-    doMove(nextGameState, playerOneMove, 1);
-    const playerTwoMove = verifyMove(getPlayerTwoMove(nextGameState), nextGameState, 2);
-    doMove(nextGameState, playerTwoMove, 2);
+    const bot1Move = verifyMove(bot1.makeMove(gameState), gameState, 1);
+    doMove(nextGameState, bot1Move, 1);
+    const bot2Move = verifyMove(bot2.makeMove(gameState), gameState, 2);
+    doMove(nextGameState, bot2Move, 2);
 
     if (nextGameState.turn % 25 === 0) {
         return {
@@ -44,24 +45,22 @@ export const  getNextGameState =  (gameState: GameState): GameState => {
     }
 }
 
-const doMove = (nextGameState: GameState, move: PlayerOutput, player: 1 | 2): void => {
+const doMove = (nextGameState: GameState, move: BotOutput, bot: 1 | 2): void => {
     if (!move) return;
     if (nextGameState.rows[move.to.row][move.to.column].type === "Wall") return;
 
     nextGameState.rows[move.from.row][move.from.column].value -= move.quantity;
-    if (nextGameState.rows[move.to.row][move.to.column].owner === player) {
+    if (nextGameState.rows[move.to.row][move.to.column].owner === bot) {
         // Moving to friendly teritory
         nextGameState.rows[move.to.row][move.to.column].value += move.quantity;
     } else if (nextGameState.rows[move.to.row][move.to.column].value >= move.quantity) {
-        // Player loses to owner
+        // Bot loses to owner
         nextGameState.rows[move.to.row][move.to.column].value -= move.quantity;
     } else {
-        // Player beats owner
+        // Bot beats owner
         nextGameState.rows[move.to.row][move.to.column].value =
             move.quantity - nextGameState.rows[move.to.row][move.to.column].value;
-        nextGameState.rows[move.to.row][move.to.column].owner = player;
-        if (nextGameState.rows[move.to.row][move.to.column].type === "Crown") nextGameState.winner = player;
+        nextGameState.rows[move.to.row][move.to.column].owner = bot;
+        if (nextGameState.rows[move.to.row][move.to.column].type === "Crown") nextGameState.winner = bot;
     }
-
-    if ( nextGameState.rows[move.to.row][move.to.column].value < 0) { console.log(`Player ${player} did an oopsie on target`)}
 }
