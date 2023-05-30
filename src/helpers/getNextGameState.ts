@@ -4,8 +4,8 @@ import { BotOutput } from "../models/botOutput";
 import { verifyMove } from "./verifyMove";
 
 // Change these to change the bots
-import bot1 from '../bots/snakeBot';
-import bot2 from '../bots/snakeBot';
+import bot1 from '../bots/nullBot';
+import bot2 from '../bots/nullBot';
 
 export const  getNextGameState =  (gameState: GameState): GameState => {
     const nextGameState:GameState={...gameState, turn: gameState.turn + 1};
