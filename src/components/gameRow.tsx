@@ -12,7 +12,9 @@ type rowProps = {
 const GameRow = (props: rowProps)  => {
     return(
         <div style={rowStyle}>
-            {props.cellStates.map((cellState) => <GameCell cellState={cellState}></GameCell>)}
+            {props.cellStates.map((cellState, index) => 
+            <GameCell key={`cell${index}`} cellState={cellState}></GameCell>
+            )}
         </div>
     );
 }

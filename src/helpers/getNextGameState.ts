@@ -5,15 +5,14 @@ import { getPlayerOneMove } from "./getPlayerOneMove";
 import { getPlayerTwoMove } from "./getPlayerTwoMove";
 import { verifyMove } from "./verifyMove";
 
-export const getNextGameState = (gameState: GameState): GameState => {
-    const playerOneMove = verifyMove(getPlayerOneMove(gameState), gameState, 1);
-    const playerTwoMove = verifyMove(getPlayerTwoMove(gameState), gameState, 2);
-    
+export const  getNextGameState =  (gameState: GameState): GameState => {
     const nextGameState:GameState={...gameState, turn: gameState.turn + 1};
-    doMove(nextGameState, playerOneMove, 1);
-    doMove(nextGameState, playerTwoMove, 2);
 
-    //check win conditions!
+    // Todo: Change players into classes with function getMove()
+    const playerOneMove = verifyMove(getPlayerOneMove(gameState), gameState, 1);
+    doMove(nextGameState, playerOneMove, 1);
+    const playerTwoMove = verifyMove(getPlayerTwoMove(nextGameState), nextGameState, 2);
+    doMove(nextGameState, playerTwoMove, 2);
 
     if (nextGameState.turn % 25 === 0) {
         return {
@@ -45,23 +44,24 @@ export const getNextGameState = (gameState: GameState): GameState => {
     }
 }
 
-const doMove = (nextGamestate: GameState, move: PlayerOutput, player: 1 | 2): void => {
+const doMove = (nextGameState: GameState, move: PlayerOutput, player: 1 | 2): void => {
     if (!move) return;
-    if (nextGamestate.rows[move.to.row][move.to.column].type === "Wall") return;
+    if (nextGameState.rows[move.to.row][move.to.column].type === "Wall") return;
 
-    nextGamestate.rows[move.from.row][move.from.column].value -= move.quantity;
-    if (nextGamestate.rows[move.to.row][move.to.column].owner === player) {
+    nextGameState.rows[move.from.row][move.from.column].value -= move.quantity;
+    if (nextGameState.rows[move.to.row][move.to.column].owner === player) {
         // Moving to friendly teritory
-        nextGamestate.rows[move.to.row][move.to.column].value += move.quantity;
-    } else if (nextGamestate.rows[move.to.row][move.to.column].value >= move.quantity) {
+        nextGameState.rows[move.to.row][move.to.column].value += move.quantity;
+    } else if (nextGameState.rows[move.to.row][move.to.column].value >= move.quantity) {
         // Player loses to owner
-        nextGamestate.rows[move.to.row][move.to.column].value = nextGamestate.rows[move.to.row][move.to.column].value - move.quantity;
+        nextGameState.rows[move.to.row][move.to.column].value -= move.quantity;
     } else {
         // Player beats owner
-        nextGamestate.rows[move.to.row][move.to.column].value =
-            move.quantity - nextGamestate.rows[move.to.row][move.to.column].value;
-        nextGamestate.rows[move.to.row][move.to.column].owner = player;
-        if (nextGamestate.rows[move.to.row][move.to.column].type === "Crown") nextGamestate.winner = player;
-        
+        nextGameState.rows[move.to.row][move.to.column].value =
+            move.quantity - nextGameState.rows[move.to.row][move.to.column].value;
+        nextGameState.rows[move.to.row][move.to.column].owner = player;
+        if (nextGameState.rows[move.to.row][move.to.column].type === "Crown") nextGameState.winner = player;
     }
+
+    if ( nextGameState.rows[move.to.row][move.to.column].value < 0) { console.log(`Player ${player} did an oopsie on target`)}
 }

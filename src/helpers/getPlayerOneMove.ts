@@ -1,122 +1,95 @@
+import { CellState } from "../models/cellState";
 import { GameState } from "../models/gameState";
 import { PlayerOutput } from "../models/playerOutput";
 
-// Deterministic Win on turn 101
-export const getPlayerOneMove = (gameState: GameState): PlayerOutput => {
-    switch (gameState.turn) {
-        case 98:
-            return {
-                from: {column: 6, row: 6},
-                to: {column: 6, row: 7},
-                quantity: 1000,
-            }
-        case 99:
-            return {
-                from: {column: 6, row: 7},
-                to: {column: 7, row: 7},
-                quantity: 1000,
-            }
-        case 100:
-            return {
-                from: {column: 7, row: 7},
-                to: {column: 7, row: 8},
-                quantity: 1000,
-            }
-        case 101:
-            return {
-                from: {column: 7, row: 8},
-                to: {column: 8, row: 8},
-                quantity: 1000,
-            }
-    }
-    if (gameState.turn%50 < 40){
-        switch (gameState.turn % 5) {
-            case 1:
-                return {
-                    from: {column: 0, row: 0},
-                    to: {column: 0, row: 1},
-                    quantity: 11,
-                } 
-            case 2:
-                return {
-                    from: {column: 0, row: 1},
-                    to: {column: 0, row: 2},
-                    quantity: 11,
-                } 
-            case 3:
-                return {
-                    from: {column: 0, row: 2},
-                    to: {column: 1, row: 2},
-                    quantity: 11,
-                } 
-            case 4:
-                return {
-                    from: {column: 1, row: 2},
-                    to: {column: 2, row: 2},
-                    quantity: 11,
-                }  
-            case 0:
-                return {
-                    from: {column: 2, row: 2},
-                    to: {column: 2, row: 2},
-                    quantity: 11,
-                }  
-            default:
-                return null
-        };
-    } else {
+type cellAndStep = {
+    cell: [number, number],
+    step: [number, number]
+    distance: number,
+}
 
-    }
-    switch (gameState.turn %50) {
-            case 40:
-                return {
-                    from: {column: 2, row: 2},
-                    to: {column: 2, row: 3},
-                    quantity: 1000,
-                } 
-            case 41:
-                return {
-                    from: {column: 2, row: 3},
-                    to: {column: 2, row: 4},
-                    quantity: 1000,
-                }  
-            case 42:
-                return {
-                    from: {column: 2, row: 4},
-                    to: {column: 2, row: 5},
-                    quantity: 1000,
-                } 
-            case 43:
-                return {
-                    from: {column: 2, row: 5},
-                    to: {column: 2, row: 6},
-                    quantity: 1000,
-                } 
-            case 44:
-                return {
-                    from: {column: 2, row: 6},
-                    to: {column: 3, row: 6},
-                    quantity: 1000,
-                }
-            case 45:
-                return {
-                    from: {column: 3, row: 6},
-                    to: {column: 4, row: 6},
-                    quantity: 1000,
-                }  
-            case 46:
-                return {
-                    from: {column: 4, row: 6},
-                    to: {column: 5, row: 6},
-                    quantity: 1000,
-                }
-            case 47:
-                return {
-                    from: {column: 5, row: 6},
-                    to: {column: 6, row: 6},
-                    quantity: 1000,
-                }
-            default:
-                return null
-        }
+// Target based algorithm
+export const getPlayerOneMove = (gameState: GameState): PlayerOutput => {
+    // TODO: Ideas: U
+    // Use units on old castles (e.g. 2,2)
+    // Dont spend all units at once. 
+    // Check battle will be won?
+    const TARGETS: [number, number][] = [[0,0],[2,2], [2,6], [6,6], [9,9]];
+    const ownedCell: [number, number][] = gameState.rows.map(
+        (row) => (row.reduce(getOwnedCellsIndices, []))
+        ).flatMap(
+            (rowOfIndices, rowIndex) => rowOfIndices.map(
+               ( columnIndex): [number, number]  => [rowIndex, columnIndex]
+                )
+        );
+    const ownedCellsWithUnits: [number, number][] = gameState.rows.map(
+        (row) => (row.reduce(getOwnedCellsWithUnitsIndices, []))
+        ).flatMap(
+            (rowOfIndices, rowIndex) => rowOfIndices.map(
+               ( columnIndex): [number, number]  => [rowIndex, columnIndex]
+                )
+        );
+    const nextTarget = findNextTarget(TARGETS, ownedCell);
+
+    const nearestOwnedCellWithUnitsAndStep = ownedCellsWithUnits.reduce(
+        (nearestCellAndStep: cellAndStep,currentCell,currentIndex): cellAndStep => {
+            const stepToTarget: [number, number] = [nextTarget[0] - currentCell[0], nextTarget[1] - currentCell[1]];
+            const distanceToTarget: number = 
+                (stepToTarget.map(Math.abs))
+                    .reduce((partialSum, stepSize) => partialSum + stepSize, 0);
+            return distanceToTarget <= nearestCellAndStep.distance
+            ? {
+                cell: currentCell,
+                step: stepToTarget,
+                distance: distanceToTarget,
+            }
+            : nearestCellAndStep
+        }, {
+            cell: [0,0],
+            step: [8,8],
+            distance: 16,
+        })
+    return {
+        from: {
+            row: nearestOwnedCellWithUnitsAndStep.cell[0],
+            column: nearestOwnedCellWithUnitsAndStep.cell[1],
+        },
+        to: {
+            row: nearestOwnedCellWithUnitsAndStep.cell[0] + makeStepUnitLength(nearestOwnedCellWithUnitsAndStep.step)[0],
+            column: nearestOwnedCellWithUnitsAndStep.cell[1] + makeStepUnitLength(nearestOwnedCellWithUnitsAndStep.step)[1],
+        },
+        quantity: 1000
+    };
+}
+
+const getOwnedCellsIndices = (
+    ownedCellIndices: number[],
+    currentCell: CellState,
+    currentCellIndex: number,
+    ) => currentCell.owner === 1 ? ownedCellIndices.concat(currentCellIndex): ownedCellIndices;
+
+const getOwnedCellsWithUnitsIndices = (
+    ownedCellIndices: number[],
+    currentCell: CellState,
+    currentCellIndex: number,
+    ) => (currentCell.owner === 1 && (currentCell.value > 1)) ? ownedCellIndices.concat(currentCellIndex): ownedCellIndices;
+
+const findNextTarget = (
+    targets: [number, number][],
+    ownedCells: [number, number][]
+    ):[number, number] => {
+        const nextTarget = targets.find(
+            (target: [number, number]) => {
+                let targetBelongsToPlayer = false
+                ownedCells.forEach((ownedCell) => targetBelongsToPlayer = targetBelongsToPlayer || (ownedCell[0] === target[0] && ownedCell[1] === target[1]))
+                return !targetBelongsToPlayer
+            }
+        )
+        return nextTarget ? nextTarget : [8,8];
+};
+
+const makeStepUnitLength = (step: [number, number]): [number, number] => {
+    return Math.abs(step[0]) >= Math.abs(step[1]) 
+    ? [step[0]/ Math.abs(step[0]) ,0] 
+    : [0,step[1]/ Math.abs(step[1])] ;
 }

@@ -13,7 +13,11 @@ function App() {
         <p>Turn: {gameState.turn}</p>
         <GameField rowStates={gameState.rows}></GameField>
         <p>{gameState.winner && `Player ${gameState.winner} wins!`}</p>
-        {!gameState.winner &&<button onClick={() => {updateGameState(getNextGameState(gameState))}}>Next Turn</button>}
+        {
+          !gameState.winner 
+          && <button onClick={() => updateGameState(getNextGameState(gameState))
+          }>Next Turn</button>
+        }
       </div>
     </div>
   );

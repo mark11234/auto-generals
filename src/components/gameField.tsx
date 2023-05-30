@@ -10,7 +10,12 @@ type gameFieldProps = {
 
 const GameField = (props: gameFieldProps)  => {
     
-    return(<div style={fieldStyle}>{props.rowStates.map(rowState => <GameRow cellStates={rowState}></GameRow>)}</div>);
-    }
+    return(
+        <div style={fieldStyle}>{
+            props.rowStates.map((rowState, index) => 
+                <GameRow key={`row${index}`} cellStates={rowState}></GameRow>)}
+        </div>
+    );
+}
 
 export default GameField;

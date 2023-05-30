@@ -3,7 +3,7 @@ import { PlayerOutput } from "../models/playerOutput";
 
 // Random Choice of square and move N or W
 export const getPlayerTwoMove = (gameState: GameState): PlayerOutput => {
-    const direction = Math.floor(Math.random()*2) === 0 ? [-1,0] : [0,-1];
+    const direction: [number,number] = Math.floor(Math.random()*2) === 0 ? [-1,0] : [0,-1];
     while (true) {
         const column = Math.floor(Math.random()*9);
         const row = Math.floor(Math.random()*9);
@@ -19,8 +19,6 @@ export const getPlayerTwoMove = (gameState: GameState): PlayerOutput => {
                 || ( row + direction[1] >= 2 && column + direction[0] >= 2)
             )
             ) {
-            console.log(`${column}, ${row}`)
-            console.log(`${column + direction[0]}, ${row + direction[1]}`)
             return {
                 from: {column: column, row: row},
                 to: {column: column + direction[0] , row: row + direction[1]},
