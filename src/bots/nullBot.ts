@@ -2,7 +2,7 @@ import { GameState } from "../models/gameState";
 import { BotOutput } from "../models/botOutput";
 
 class Bot {
-    makeMove(gameState: GameState): BotOutput {
+    makeMove(gameState: GameState, player: 1 | 2): BotOutput {
         // Code goes here
         return null;
     }
